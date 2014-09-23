@@ -1,0 +1,17 @@
+{
+  "name": "trireme-jdbc",
+  "version": "0.1.0",
+  "description": "Connect to JDBC databases from inside Trireme",
+  "main": "lib/trireme-jdbc.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "semver": "~4.0.0"
+  }
+}
