@@ -12,6 +12,7 @@ function makeObject(cb) {
       foo: 'bar',
       bar: 123,
       close: function(cb) {
+        this.closed = true;
         cb();
       }
     });
@@ -143,6 +144,23 @@ describe('Pool Test', function() {
           P.close(done);
         });
       }, 3000);
+    });
+  });
+
+  it('Test discard', function(done) {
+    var P = new pool.Pool({
+      min: 1,
+      max: 2,
+      idleTimeout: 5,
+      create: makeObject
+    });
+
+    P.alloc(function(err, o) {
+      assert(!err);
+      assert(o);
+      P.discard(o);
+      assert(o.closed);
+      done();
     });
   });
 });

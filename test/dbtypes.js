@@ -38,25 +38,42 @@ function testType(colName, val, done) {
 }
 
 var defaultSql = 'create table types (ID integer primary key, \
-        SMALLINT smallint, INTEGER integer, BIGINT bigint, \
-        NUMERIC numeric, DECIMAL decimal, \
-        REAL real, FLOAT float, DOUBLE double, BOOLEAN boolean, BIT bit, \
-        CHARACTER character(10), VARCHAR varchar(32), LONGVARCHAR longvarchar(64), \
-        BINARY binary(10), VARBINARY varbinary(64), \
-        BLOB blob, CLOB clob, \
-        DATE date, TIME time, TIMESTAMP timestamp with time zone)';
+        SI smallint, INT integer, BINT bigint, \
+        NUM numeric, DEC decimal, \
+        RE real, FL float, DB double, BOO boolean, BI bit, \
+        CH character(10), VCH varchar(32), LVCH longvarchar(64), \
+        BIN binary(10), VBIN varbinary(64), \
+        BL blob, CL clob, \
+        DA date, TI time, TST timestamp with time zone)';
 
-var mssql = 'create table types (ID integer primary key, \
+var mssql = 'create table types (ID numeric(8), \
         SMALLINT smallint, INTEGER integer, BIGINT bigint, \
         NUMERIC numeric, DECIMAL decimal, \
         REAL real, FLOAT float, BIT bit, \
         CHARACTER character(10), VARCHAR varchar(32), \
         BINARY binary(10), VARBINARY varbinary(64), \
-        DATE date, TIME time, TIMESTAMP timestamp)';
+        DA date, TI time, TST timestamp)';
+
+var oracleSql = 'create table types (ID number(8) primary key, \
+        SI number(4), INT number(8), BINT number(38), \
+        NUM numeric, DEC decimal, \
+        RE real, FL float, DB float, BOO number(1), BI number(1), \
+        CH char(10), VCH varchar2(32), LVCH varchar2(1024), \
+        BIN raw(10), VBIN raw(64),  \
+        BL blob, CL clob, \
+        DA date, TST timestamp, TI varchar2(64))';
+
+var sqlToUse = defaultSql;
+
+if (/\:sqlserver\:/.test(config.url)) {
+  sqlToUse = mssql;
+} else if (/:oracle:/.test(config.url)) {
+  sqlToUse = oracleSql;
+}
 
 describe('Data Types', function() {
   before(function(done) {
-    db.execute(defaultSql, done);
+    db.execute(sqlToUse, done);
   });
 
   after(function(done) {
@@ -70,84 +87,87 @@ describe('Data Types', function() {
   });
 
   it('smallint', function(done) {
-    testType('SMALLINT', 1, done);
+    testType('SI', 1, done);
   });
   it('integer', function(done) {
-    testType('INTEGER', 1, done);
+    testType('INT', 1, done);
   });
   it('bigint', function(done) {
-    testType('BIGINT', 1, done);
+    testType('BINT', 1, done);
   });
   it('numeric', function(done) {
-    testType('NUMERIC', 1, done);
+    testType('NUM', 1, done);
   });
   it('decimal', function(done) {
-    testType('DECIMAL', '123', done);
+    testType('DEC', '123', done);
   });
   it('real', function(done) {
-    testType('REAL', 3.14, done);
+    testType('RE', 3.14, done);
   });
   it('float', function(done) {
-    testType('FLOAT', 3.14, done);
+    testType('FL', 3.14, done);
   });
   it('double', function(done) {
-    testType('DOUBLE', 3.14159265, done);
+    testType('DB', 3.14159265, done);
   });
   it('boolean', function(done) {
-    testType('BOOLEAN', true, done);
+    testType('BOO', true, done);
   });
   it('bit', function(done) {
     // Treat as a string
-    testType('BIT', '1', done);
+    testType('BI', '1', done);
   });
   it('character', function(done) {
       // Note space padding as per sql
-    testType('CHARACTER', 'Hello     ', done);
+    testType('CH', 'Hello     ', done);
   });
   it('varchar', function(done) {
-    testType('VARCHAR', 'Hi there', done);
+    testType('VCH', 'Hi there', done);
   });
   it('longvarchar', function(done) {
-    testType('LONGVARCHAR', 'Greetings and salutations', done);
+    testType('LVCH', 'Greetings and salutations', done);
   });
   it('binary', function(done) {
     // Again with space padding
-    testType('BINARY', new Buffer('Hey there ', 'ascii'), done);
+    testType('BIN', new Buffer('Hey there ', 'ascii'), done);
   });
   it('varbinary', function(done) {
-    testType('VARBINARY', new Buffer('And ho there'), done);
+    testType('VBIN', new Buffer('And ho there'), done);
   });
   it('blob', function(done) {
-    testType('BLOB', new Buffer('Ho ho ho'), done);
+    testType('BL', new Buffer('Ho ho ho'), done);
   });
   it('clob', function(done) {
-    testType('CLOB', 'Clobby aren\'t we?', done);
+    testType('CL', 'Clobby aren\'t we?', done);
   });
   it('time', function(done) {
-    testType('TIME', '16:00:00', done);
+    testType('TI', '16:00:00', done);
   });
   it('date', function(done) {
-    testType('DATE', '2014-09-22', done);
+    testType('DA', '2014-09-22', done);
   });
+  
   it('timestamp', function(done) {
     // Test timestamp separately.
     // SQL databases don't always have as much precision as Java, so round off
     var now = new Date('Mon Sep 22 2014 12:41:01 GMT');
-    db.execute('insert into types(id, timestamp) values (?, ?)',
+    console.log('Inserting date %s', now);
+    db.execute('insert into types(id, tst) values (?, ?)',
       [ id, now ],
       function(err, result) {
+        console.log('Insert result = %j, err = %s', result, err);
         assert(!err);
         assert.equal(result.updateCount, 1);
 
-        db.execute('select timestamp from types where id = ?',
+        db.execute('select tst from types where id = ?',
           [ id ],
           function(err, result, rows) {
+            console.log('select result %j err = %s rows = %j type = %s', result, err, rows, typeof rows);
             id++;
             assert(!err);
             assert.equal(rows.length, 1);
-            //console.log('Original timestamp: %s, %d', now, now.getTime());
-            //console.log('Returned timestamp: %s, %d', rows[0]['TIMESTAMP'], rows[0]['TIMESTAMP'].getTime());
-            assert.equal(rows[0]['TIMESTAMP'].getTime(), now.getTime());
+            //console.log('Returned timestamp: %s, %d', rows[0]['TST'], rows[0]['TST'].getTime());
+            assert.equal(rows[0]['TST'], now.toString());
             done();
           });
       });

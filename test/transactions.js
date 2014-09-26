@@ -29,6 +29,7 @@ describe('Transactions', function() {
     it('Begin', function(done) {
       db.beginTransaction(function(err, t) {
         if (err) {
+          assert(!err);
           done(err);
         } else {
           trans = t;
@@ -63,6 +64,7 @@ describe('Transactions', function() {
 
     it('Commit', function(done) {
       trans.commit(function(err) {
+        assert(!err);
         done(err);
       });
     });
@@ -86,6 +88,7 @@ describe('Transactions', function() {
     describe('Rollback', function() {
       it('Begin transaction', function(done) {
         db.beginTransaction(function(err, t) {
+          assert(!err);
           if (err) {
             done(err);
           } else {
@@ -110,6 +113,7 @@ describe('Transactions', function() {
 
       it('Rollback', function(done) {
         trans.rollback(function(err) {
+          assert(!err);
           done(err);
         });
       });
