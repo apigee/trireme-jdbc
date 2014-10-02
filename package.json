@@ -1,6 +1,6 @@
 {
   "name": "trireme-jdbc",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Connect to JDBC databases from inside Trireme",
   "main": "lib/trireme-jdbc.js",
   "directories": {
