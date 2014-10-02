@@ -19,8 +19,9 @@ compiling any native code.
 ## Supported JDBC options
 
 * Connection pooling
-* Regular and prepared statements
-* Retrieve results via callback or as a stream that may be paused
+* Parameterized queries (aka prepared statements)
+* Retrieve results via callback or as a stream
+* Transactions
 
 # Usage
 
@@ -38,6 +39,9 @@ compiling any native code.
       maxConnections: 20,
       idleTimeout: 60
     });
+
+Note: If you are running "regular" Node.js and not Trireme, then you will
+get an error at this point.
 
 The "Database" object represents a pool of connections to the database.
 It may be used to run queries or manage transactions. It takes as its
@@ -262,10 +266,11 @@ classpath used to run Trireme.
 The tests are written in Mocha but won't work because Mocha doesn't support
 Node. Instead, do the following:
 
-1) Edit "testconf/config.js" to reflect your database. Default is hsqldb.
-2) Get your JDBC driver and put it somewhere. For instance, the "drivers" directory.
-3) Set the environment variable TRIREME_CLASSPATH to point to the
+1. Edit "testconf/config.js" to reflect your database. Default is hsqldb.
+2. Get your JDBC driver and put it somewhere. For instance, the "drivers" directory.
+3. Set the environment variable TRIREME_CLASSPATH to point to the
 JDBC driver JAR from the previous step.
+4. Run "mocha" with "trireme" rather than just running mocha. Better to show that...
 
 For example:
 

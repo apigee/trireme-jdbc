@@ -7,9 +7,23 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "trireme mocha -R spec"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apigee/trireme-jdbc.git"
+  },
+  "keywords": [
+    "Trireme",
+    "JDBC",
+    "Java",
+    "Database"
+  ],
+  "author": "Greg Brail <greg@apigee.com>",
+  "bugs": {
+    "url": "https://github.com/apigee/trireme-jdbc/issues"
+  },
+  "homepage": "https://github.com/apigee/trireme-jdbc",
   "license": "MIT",
   "dependencies": {
     "semver": "~4.0.0"
