@@ -89,64 +89,124 @@ describe('Data Types', function() {
   it('smallint', function(done) {
     testType('SI', 1, done);
   });
+  it('smallint null', function(done) {
+    testType('SI', null, done);
+  });
   it('integer', function(done) {
     testType('INT', 1, done);
+  });
+  it('integer null', function(done) {
+    testType('INT', null, done);
   });
   it('bigint', function(done) {
     testType('BINT', 1, done);
   });
+  it('bigint null', function(done) {
+    testType('BINT', null, done);
+  });
   it('numeric', function(done) {
     testType('NUM', 1, done);
+  });
+  it('numeric null', function(done) {
+    testType('NUM', null, done);
   });
   it('decimal', function(done) {
     testType('DEC', '123', done);
   });
+  it('decimal null', function(done) {
+    testType('DEC', null, done);
+  });
   it('real', function(done) {
     testType('RE', 3.14, done);
+  });
+  it('real null', function(done) {
+    testType('RE', null, done);
   });
   it('float', function(done) {
     testType('FL', 3.14, done);
   });
+  it('float null', function(done) {
+    testType('FL', null, done);
+  });
   it('double', function(done) {
     testType('DB', 3.14159265, done);
   });
+  it('double null', function(done) {
+    testType('DB', null, done);
+  });
   it('boolean', function(done) {
     testType('BOO', true, done);
+  });
+  it('boolean null', function(done) {
+    testType('BOO', null, done);
   });
   it('bit', function(done) {
     // Treat as a string
     testType('BI', '1', done);
   });
+  it('bit null', function(done) {
+    testType('BI', null, done);
+  });
   it('character', function(done) {
       // Note space padding as per sql
     testType('CH', 'Hello     ', done);
   });
+  it('character null', function(done) {
+    testType('CH', null, done);
+  });
   it('varchar', function(done) {
     testType('VCH', 'Hi there', done);
   });
+  it('varchar null', function(done) {
+    testType('VCH', null, done);
+  });
   it('longvarchar', function(done) {
     testType('LVCH', 'Greetings and salutations', done);
+  });
+  it('longvarchar null', function(done) {
+    testType('LVCH', null, done);
   });
   it('binary', function(done) {
     // Again with space padding
     testType('BIN', new Buffer('Hey there ', 'ascii'), done);
   });
+  it('binary null', function(done) {
+    testType('BIN', null, done);
+  });
   it('varbinary', function(done) {
     testType('VBIN', new Buffer('And ho there'), done);
   });
+  it('varbinary null', function(done) {
+    testType('VBIN', null, done);
+  });
   it('blob', function(done) {
+    testType('BL', new Buffer('Ho ho ho'), done);
+  });
+  it('blob null', function(done) {
     testType('BL', new Buffer('Ho ho ho'), done);
   });
   it('clob', function(done) {
     testType('CL', 'Clobby aren\'t we?', done);
   });
+  it('clob null', function(done) {
+    testType('CL', 'Clobby aren\'t we?', done);
+  });
   it('time', function(done) {
     testType('TI', '16:00:00', done);
+  });
+  it('time null', function(done) {
+    testType('TI', null, done);
   });
   it('date', function(done) {
     testType('DA', '2014-09-22', done);
   });
-  
+  it('date null', function(done) {
+    testType('DA', null, done);
+  });
+  it('timestamp null', function(done) {
+    testType('TST', null, done);
+  });
+
   it('timestamp', function(done) {
     // Test timestamp separately.
     // SQL databases don't always have as much precision as Java, so round off
