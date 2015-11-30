@@ -263,14 +263,16 @@ classpath used to run Trireme.
 
 ### Testing
 
-The tests are written in Mocha but won't work because Mocha doesn't support
-Node. Instead, do the following:
+"npm test" will test this module using the Trireme binary that it depends
+on, and also using the HSQLDB driver included with the distribution.
+
+In order to test with another database, do the following:
 
 1. Edit "testconf/config.js" to reflect your database. Default is hsqldb.
 2. Get your JDBC driver and put it somewhere. For instance, the "drivers" directory.
 3. Set the environment variable TRIREME_CLASSPATH to point to the
 JDBC driver JAR from the previous step.
-4. Run "mocha" with "trireme" rather than just running mocha. Better to show that...
+4. Run "mocha" with "trireme" rather than just running mocha.
 
 For example:
 
