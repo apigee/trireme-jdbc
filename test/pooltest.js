@@ -163,4 +163,161 @@ describe('Pool Test', function() {
       done();
     });
   });
+
+  describe('When connection is discarded and closed', function() {
+    it('number of allocated connections should decrease', function(done) {
+      var P = new pool.Pool({
+        min: 1,
+        max: 2,
+        idleTimeout: 1,
+        create: makeObject
+      });
+
+      P.alloc(function(err, o) {
+        assert(!err);
+        assert(o);
+        assert.equal(P.allocated, 1);
+
+        P.alloc(function(err, o2) {
+          assert(!err);
+          assert(o2);
+          assert.equal(P.allocated, 2);
+
+          P.discard(o, function() {
+            assert.equal(P.allocated, 1);
+
+            P.discard(o2, function() {
+              assert.equal(P.allocated, 0);
+              done();
+            });
+          });
+
+        });
+      });
+    });
+  });
+
+  describe('When connections timeouts expire and the connections are closed', function() {
+    it('number of allocated connections should decrease to "minConnection"', function(done) {
+      this.timeout(5000);
+
+      var minConnections = 1;
+      var P = new pool.Pool({
+        min: minConnections,
+        max: 2,
+        idleTimeout: 1,
+        create: makeObject
+      });
+
+      P.alloc(function(err, o) {
+        assert(!err);
+        assert(o);
+        assert.equal(P.allocated, 1);
+
+        P.alloc(function(err, o2) {
+          assert(!err);
+          assert(o2);
+          assert.equal(P.allocated, 2);
+
+          P.free(o);
+          P.free(o2);
+          setTimeout(function() {
+            assert.equal(P.allocated, minConnections);
+            done();
+          }, 2000);
+        });
+
+      });
+
+    });
+  });
+
+  describe('When close() is called', function() {
+    it('number of allocated connections should drop down to 0', function(done) {
+      this.timeout(5000);
+
+      var minConnections = 1;
+      var P = new pool.Pool({
+        min: minConnections,
+        max: 5,
+        idleTimeout: 10,
+        create: makeObject
+      });
+
+      P.alloc(function(err, o) {
+        assert(!err);
+        assert(o);
+        assert.equal(P.allocated, 1);
+
+        P.alloc(function(err, o2) {
+          assert(!err);
+          assert(o2);
+          assert.equal(P.allocated, 2);
+
+          P.alloc(function(err, o3) {
+            assert(!err);
+            assert(o3);
+            assert.equal(P.allocated, 3);
+
+            P.free(o);
+            P.free(o2);
+            P.free(o3);
+            P.close();
+
+            setTimeout(function() {
+              assert.equal(P.allocated, 0);
+              done();
+            }, 2000);
+          });
+
+
+        });
+
+      });
+    });
+  });
+
+  describe('When connection is freed and the pool is full', function() {
+    it('should be immediately closed and the number of allocated connections should decrease', function(done) {
+      this.timeout(5000);
+
+      var minConnections = 1;
+      var P = new pool.Pool({
+        min: minConnections,
+        max: 5,
+        idleTimeout: 10,
+        create: makeObject
+      });
+
+      P.alloc(function(err, o) {
+        assert(!err);
+        assert(o);
+        assert.equal(P.allocated, 1);
+
+        P.alloc(function(err, o2) {
+          assert(!err);
+          assert(o2);
+          assert.equal(P.allocated, 2);
+
+          P.alloc(function(err, o3) {
+            assert(!err);
+            assert(o3);
+            assert.equal(P.allocated, 3);
+
+            // Trick to trigger immediate close in free()
+            P.max = 2;
+
+            P.free(o);
+            P.free(o2);
+            P.free(o3);
+            setTimeout(function() {
+              assert.equal(P.allocated, 2);
+              done();
+            }, 1000)
+
+          });
+        });
+      });
+    });
+  });
 });
